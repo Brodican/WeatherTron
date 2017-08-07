@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -15,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.utkua.weathertron.Data.WeatherModel;
 import com.example.utkua.weathertron.Utilities.JsonUtilities;
 import com.example.utkua.weathertron.Utilities.NetworkUtilities;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,8 +27,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class ChosenCityActivity extends AppCompatActivity {
 
@@ -35,9 +40,13 @@ public class ChosenCityActivity extends AppCompatActivity {
     private ProgressBar mWeatherPB;
     public ListView list;
 
+    private List<WeatherModel> weatherModels = new ArrayList<>();
     private FusedLocationProviderClient mFusedLocationClient;
 
     private String inputLocation = "";
+    private String currentDescription = "";
+    private String currentTempMax;
+    private String currentTempMin;
 
     public static final String TAG = "ChosenCityActivity";
 
@@ -46,8 +55,12 @@ public class ChosenCityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chosen_city);
 
-        // Find weather_tv TextView and store it in mWeatherTV member variable
-//        mWeatherTV = (TextView) findViewById(R.id.days_textview);
+        // Find the toolbar view inside the activity layout
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
+
         mCurrentTV = (TextView) findViewById(R.id.current_location);
 //        mInputET = (EditText) findViewById(R.id.input_get_location);
         mWeatherPB = (ProgressBar) findViewById(R.id.loading_weather);
@@ -140,7 +153,6 @@ public class ChosenCityActivity extends AppCompatActivity {
 
             Log.d(TAG, "doInBackground called");
 
-            /* If there's no zip code, there's nothing to look up. */
             if (params.length == 0) {
                 return null;
             }
@@ -226,9 +238,14 @@ public class ChosenCityActivity extends AppCompatActivity {
                 Log.d(TAG, "weatherData is not null");
 
                 TextView curLoc = (TextView) findViewById(R.id.current_location);
-                curLoc.setText(weatherData[1]);
+                curLoc.setText(weatherData[3]);
                 TextView curDesc = (TextView) findViewById(R.id.current_loc_description);
-                curDesc.setText(weatherData[2]);
+                curDesc.setText(weatherData[4]);
+                TextView curMinMax = (TextView) findViewById(R.id.current_temp_max_min);
+                currentDescription = weatherData[4];
+                currentTempMin = weatherData[1];
+                currentTempMax = weatherData[2];
+                curMinMax.setText(Html.fromHtml("<font color=#cc0029>" + currentTempMax + "</font> <font color=#0516DE>" + currentTempMin + "</font>"));
                 TextView curTemp = (TextView) findViewById(R.id.current_loc_temp);
                 curTemp.setText(weatherData[0]);
 
@@ -250,7 +267,6 @@ public class ChosenCityActivity extends AppCompatActivity {
 
             Log.d(TAG, "doInBackground called - Coordinates7Day");
 
-            /* If there's no zip code, there's nothing to look up. */
             if (doubles.length == 0) {
                 return null;
             }
@@ -282,31 +298,148 @@ public class ChosenCityActivity extends AppCompatActivity {
                 Log.d(TAG, "weatherData is not null");
 
 //                TextView daysTV = (TextView) findViewById(R.id.days_textview);
-                String[] dayInfo = new String[7];
-                Integer[] iconIds = new Integer[7];
 
-                DateFormat dateFormat = new SimpleDateFormat("MM/dd");
-                Date date = new Date();
-                String dateStr;
+                String dateStr = "";
                 Calendar c = Calendar.getInstance();
-                c.setTime(date);
+                int day = c.get(Calendar.DAY_OF_WEEK) + 1;
 
-                for (int i = 0; i < 7; i++) {
-                    String temp = weatherData[i];
-                    dateStr = dateFormat.format(date);
-                    dayInfo[i] = dateStr +": "+ temp + "\n\n\n";
-                    c.add(Calendar.DATE, 1);
-                    date = c.getTime();
+                for (int i = 0; i < 8; i++) {
+                    WeatherModel dayInfo = new WeatherModel();
+                    switch (day) {
+                        case Calendar.SUNDAY:
+                            dateStr = "Sunday"; day++; break;
+                        case Calendar.MONDAY:
+                            dateStr = "Monday"; day++; break;
+                        case Calendar.TUESDAY:
+                            dateStr = "Tuesday"; day++; break;
+                        case Calendar.WEDNESDAY:
+                            dateStr = "Wednesday"; day++; break;
+                        case Calendar.THURSDAY:
+                            dateStr = "Thursday"; day++; break;
+                        case Calendar.FRIDAY:
+                            dateStr = "Friday"; day++; break;
+                        case Calendar.SATURDAY: {
+                            dateStr = "Saturday";
+                            day = 1;
+                            break;
+                        }
+                    }
+                    dayInfo.setMinTempInfo(Integer.valueOf(weatherData[i]));
+                    dayInfo.setMaxTempInfo(Integer.valueOf(weatherData[i+8]));
+                    dayInfo.setDayInfo(dateStr);
+                    dayInfo.setImgId(Integer.parseInt(weatherData[i+16]));
+                    weatherModels.add(dayInfo);
+
                 }
 
-                for (int i = 0; i < 7; i++) {
-                    int id = Integer.parseInt(weatherData[i+7]);
-                    iconIds[i] = id;
-                }
 
-                DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, dayInfo, iconIds); // Mainactivity set
+                DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, weatherModels); // ChosenCityActivity set
                 list = (ListView)findViewById(R.id.days_LV);
                 list.setAdapter(adapter);
+                WeatherModel  model = new WeatherModel();
+                model.setDayInfo("Today: Current weather state: " + currentDescription + ". The maximum temperature today is: "
+                        + currentTempMax + ". The minimum temperature tonight is: " + currentTempMin + ".");
+                WeatherModel separatorModel = new WeatherModel();
+                // Organise separators
+                weatherModels.add(separatorModel);
+                weatherModels.add(model);
+                weatherModels.add(separatorModel);
+
+                mWeatherPB.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
+    public class FetchWeatherTaskCoordinatesAllDay extends AsyncTask<Double, Void, String[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mWeatherPB.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String[] doInBackground(Double... doubles) {
+
+            Log.d(TAG, "doInBackground called - CoordinatesAllDay");
+
+            if (doubles.length == 0) {
+                return null;
+            }
+
+            Double lat = doubles[0];
+            Double lon = doubles[1];
+
+            URL weatherRequestUrl7Day = NetworkUtilities.build7DayUrl(lat, lon);
+
+            try {
+                String jsonWeatherResponse = NetworkUtilities
+                        .getResponseFromHttpUrl(weatherRequestUrl7Day);
+
+                String[] simpleJsonWeatherDataCurrent = JsonUtilities
+                        .get7DaysFromJson(jsonWeatherResponse);
+
+                return simpleJsonWeatherDataCurrent;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String[] weatherData) {
+            Log.d(TAG, "onPostExecute called");
+            if (weatherData != null) {
+                Log.d(TAG, "weatherData is not null");
+
+//                TextView daysTV = (TextView) findViewById(R.id.days_textview);
+
+                String dateStr = "";
+                Calendar c = Calendar.getInstance();
+                int day = c.get(Calendar.DAY_OF_WEEK) + 1;
+
+                for (int i = 0; i < 8; i++) {
+                    WeatherModel dayInfo = new WeatherModel();
+                    switch (day) {
+                        case Calendar.SUNDAY:
+                            dateStr = "Sunday"; day++; break;
+                        case Calendar.MONDAY:
+                            dateStr = "Monday"; day++; break;
+                        case Calendar.TUESDAY:
+                            dateStr = "Tuesday"; day++; break;
+                        case Calendar.WEDNESDAY:
+                            dateStr = "Wednesday"; day++; break;
+                        case Calendar.THURSDAY:
+                            dateStr = "Thursday"; day++; break;
+                        case Calendar.FRIDAY:
+                            dateStr = "Friday"; day++; break;
+                        case Calendar.SATURDAY: {
+                            dateStr = "Saturday";
+                            day = 1;
+                            break;
+                        }
+                    }
+                    dayInfo.setMinTempInfo(Integer.valueOf(weatherData[i]));
+                    dayInfo.setMaxTempInfo(Integer.valueOf(weatherData[i+8]));
+                    dayInfo.setDayInfo(dateStr);
+                    dayInfo.setImgId(Integer.parseInt(weatherData[i+16]));
+                    weatherModels.add(dayInfo);
+
+                }
+
+
+                DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, weatherModels); // ChosenCityActivity set
+                list = (ListView)findViewById(R.id.days_LV);
+                list.setAdapter(adapter);
+                WeatherModel  model = new WeatherModel();
+                model.setDayInfo("Today: Current weather state: " + currentDescription + ". The maximum temperature today is: "
+                        + currentTempMax + ". The minimum temperature tonight is: " + currentTempMin + ".");
+                WeatherModel separatorModel = new WeatherModel();
+                // Organise separators
+                weatherModels.add(separatorModel);
+                weatherModels.add(model);
+                weatherModels.add(separatorModel);
 
                 mWeatherPB.setVisibility(View.INVISIBLE);
             }

@@ -4,13 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:padding="5dp" />
-
-    <RelativeLayout android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/info_holder_RL"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -18,16 +14,35 @@
             android:id="@+id/day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_alignParentLeft="true"
             android:textColor="#33CC33" />
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true" />
+
         <TextView
             android:id="@+id/temps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="10dp"/>
+            android:paddingRight="10dp"/>
+
+        <View
+            android:id="@+id/Separator"
+            android:visibility="gone"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:paddingTop="10dp"
+            android:layout_centerInParent="true"
+            android:background="#c0c0c0"/>
     </RelativeLayout>
 </LinearLayout>

@@ -47,13 +47,28 @@ public class NetworkUtilities {
     }
 
     public static URL build7DayUrl(Double lat, Double lon) {
-        String testUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" +lat+ "&lon=" +lon+ "&cnt=7&appid=983bd13cdd1059ecc26b300b2a062f42";
+        String testUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" +lat+ "&lon=" +lon+ "&cnt=9&appid=983bd13cdd1059ecc26b300b2a062f42";
 
         URL url = null;
 
         try {
             url = new URL(testUrl);
             Log.d(TAG, "Url in build7DayURL: " + url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildAllDayUrl(Double lat, Double lon) {
+        String testUrl = "http://api.openweathermap.org/data/2.5/find?lat=" + lat + "&lon=" + lon + "&cnt=8&appid=983bd13cdd1059ecc26b300b2a062f42";
+
+        URL url = null;
+
+        try {
+            url = new URL(testUrl);
+            Log.d(TAG, "Url in buildAllDayURL: " + url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

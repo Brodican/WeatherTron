@@ -5,10 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
@@ -28,6 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:paddingLeft="30dp"
+            android:textSize="75sp"
             android:layout_below="@+id/current_loc_description"
             android:gravity="center"
             android:text="Temp" />
@@ -40,6 +52,15 @@
             android:gravity="center"
             android:text="Name"
             android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:id="@+id/current_temp_max_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="temp here"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textSize="12sp" />
     </RelativeLayout>
 
     <!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
@@ -58,12 +79,26 @@
     <!--android:layout_height="wrap_content" />-->
     <!--</ScrollView>-->
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"
+        android:layout_above="@+id/days_LV"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"
+        android:layout_above="@+id/horizontalScrollViewHours"/>
+
     <ListView
         android:id="@+id/days_LV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/horizontalScrollView"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/horizontalScrollViewHours"
+        android:layout_above="@+id/my_toolbar"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     </ListView>
@@ -79,11 +114,11 @@
 
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/relativeLayout"
-        android:id="@+id/horizontalScrollView">
+        android:id="@+id/horizontalScrollViewHours">
 
         <LinearLayout
             android:layout_width="wrap_content"
