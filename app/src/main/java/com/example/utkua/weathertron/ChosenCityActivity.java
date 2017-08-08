@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.utkua.weathertron.Data.AllDayModel;
 import com.example.utkua.weathertron.Data.WeatherModel;
 import com.example.utkua.weathertron.Utilities.JsonUtilities;
 import com.example.utkua.weathertron.Utilities.NetworkUtilities;
@@ -41,7 +44,12 @@ public class ChosenCityActivity extends AppCompatActivity {
     public ListView list;
 
     private List<WeatherModel> weatherModels = new ArrayList<>();
+    private List<AllDayModel> allDayModels = new ArrayList<>();
     private FusedLocationProviderClient mFusedLocationClient;
+
+    LinearLayoutManager mLayoutManager;
+    RecyclerView mAllDaysList;
+    AllDayAdapter mDayAdapter;
 
     private String inputLocation = "";
     private String currentDescription = "";
@@ -60,6 +68,11 @@ public class ChosenCityActivity extends AppCompatActivity {
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
+
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        mAllDaysList = (RecyclerView) findViewById(R.id.allDays_RV_hor);
+        mAllDaysList.setLayoutManager(mLayoutManager);
 
         mCurrentTV = (TextView) findViewById(R.id.current_location);
 //        mInputET = (EditText) findViewById(R.id.input_get_location);
@@ -99,7 +112,8 @@ public class ChosenCityActivity extends AppCompatActivity {
                     }
                 });
 
-
+        mDayAdapter = new AllDayAdapter(allDayModels, R.layout.my_horizontal_list);
+        mAllDaysList.setAdapter(mDayAdapter);
     }
 
     @Override
@@ -138,6 +152,10 @@ public class ChosenCityActivity extends AppCompatActivity {
 
     private void loadWeatherDataCoordinates7Day(Double lat, Double lon) {
         new FetchWeatherTaskCoordinates7Day().execute(lat, lon);
+    }
+
+    private void loadWeatherDataCoordinatesAllDay(Double lat, Double lon) {
+        new FetchWeatherTaskCoordinatesAllDay().execute(lat, lon);
     }
 
     public class FetchWeatherTaskString extends AsyncTask<String, Void, String[]> {
@@ -370,16 +388,16 @@ public class ChosenCityActivity extends AppCompatActivity {
             Double lat = doubles[0];
             Double lon = doubles[1];
 
-            URL weatherRequestUrl7Day = NetworkUtilities.build7DayUrl(lat, lon);
+            URL weatherRequestUrl7Day = NetworkUtilities.buildAllDayUrl(lat, lon);
 
             try {
-                String jsonWeatherResponse = NetworkUtilities
-                        .getResponseFromHttpUrl(weatherRequestUrl7Day);
+//                String jsonWeatherResponse = NetworkUtilities
+//                        .getResponseFromHttpUrl(weatherRequestUrl7Day);
+//
+//                String[] simpleJsonWeatherDataCurrent = JsonUtilities
+//                        .getAllDayFromJson(jsonWeatherResponse);
 
-                String[] simpleJsonWeatherDataCurrent = JsonUtilities
-                        .get7DaysFromJson(jsonWeatherResponse);
-
-                return simpleJsonWeatherDataCurrent;
+                return null;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -432,7 +450,7 @@ public class ChosenCityActivity extends AppCompatActivity {
                 DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, weatherModels); // ChosenCityActivity set
                 list = (ListView)findViewById(R.id.days_LV);
                 list.setAdapter(adapter);
-                WeatherModel  model = new WeatherModel();
+                WeatherModel model = new WeatherModel();
                 model.setDayInfo("Today: Current weather state: " + currentDescription + ". The maximum temperature today is: "
                         + currentTempMax + ". The minimum temperature tonight is: " + currentTempMin + ".");
                 WeatherModel separatorModel = new WeatherModel();
@@ -443,6 +461,11 @@ public class ChosenCityActivity extends AppCompatActivity {
 
                 mWeatherPB.setVisibility(View.INVISIBLE);
             }
+            TextView RV_TV = (TextView) findViewById(R.id.test_TV);
+            AllDayModel dayModel = new AllDayModel(RV_TV);
+            dayModel.setText("Testing");
+            allDayModels.add(dayModel);
+
         }
     }
 }

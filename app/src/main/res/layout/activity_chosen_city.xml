@@ -89,13 +89,13 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="#c0c0c0"
-        android:layout_above="@+id/horizontalScrollViewHours"/>
+        android:layout_above="@+id/allDays_RV_hor"/>
 
     <ListView
         android:id="@+id/days_LV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/horizontalScrollViewHours"
+        android:layout_below="@+id/allDays_RV_hor"
         android:layout_above="@+id/my_toolbar"
         android:divider="@null"
         android:dividerHeight="0dp"
@@ -112,18 +112,12 @@
         android:layout_centerVertical="true"
         android:visibility="invisible" />
 
-    <HorizontalScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/allDays_RV_hor"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/relativeLayout"
-        android:id="@+id/horizontalScrollViewHours">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativeLayout">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
-    </HorizontalScrollView>
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>
