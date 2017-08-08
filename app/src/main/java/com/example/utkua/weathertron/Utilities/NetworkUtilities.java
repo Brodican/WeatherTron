@@ -16,8 +16,9 @@ import static android.content.ContentValues.TAG;
  */
 
 public class NetworkUtilities {
-    public static URL buildUrl(String location) {
-        String testUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=983bd13cdd1059ecc26b300b2a062f42";
+
+    public static URL buildUrl(Double lat, Double lon) {
+        String testUrl = "http://api.openweathermap.org/data/2.5/weather?lat=" +lat+ "&lon=" +lon+ "&appid=983bd13cdd1059ecc26b300b2a062f42";
 
         URL url = null;
 
@@ -31,8 +32,8 @@ public class NetworkUtilities {
         return url;
     }
 
-    public static URL buildUrl(Double lat, Double lon) {
-        String testUrl = "http://api.openweathermap.org/data/2.5/weather?lat=" +lat+ "&lon=" +lon+ "&appid=983bd13cdd1059ecc26b300b2a062f42";
+    public static URL buildUrl(String location) {
+        String testUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=983bd13cdd1059ecc26b300b2a062f42";
 
         URL url = null;
 
@@ -61,8 +62,38 @@ public class NetworkUtilities {
         return url;
     }
 
+    public static URL build7DayUrl(String location) {
+        String testUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?q=" + location + "&cnt=9&appid=983bd13cdd1059ecc26b300b2a062f42";
+
+        URL url = null;
+
+        try {
+            url = new URL(testUrl);
+            Log.d(TAG, "Url in build7DayURL: " + url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
     public static URL buildAllDayUrl(Double lat, Double lon) {
-        String testUrl = "http://api.openweathermap.org/data/2.5/find?lat=" + lat + "&lon=" + lon + "&cnt=8&appid=983bd13cdd1059ecc26b300b2a062f42";
+        String testUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&cnt=16&appid=983bd13cdd1059ecc26b300b2a062f42";
+
+        URL url = null;
+
+        try {
+            url = new URL(testUrl);
+            Log.d(TAG, "Url in buildAllDayURL: " + url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildAllDayUrl(String location) {
+        String testUrl = "http://api.openweathermap.org/data/2.5/forecast?q=" + location + "&cnt=16&appid=983bd13cdd1059ecc26b300b2a062f42";
 
         URL url = null;
 

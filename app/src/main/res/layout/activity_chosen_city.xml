@@ -16,7 +16,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <RelativeLayout
-        android:id="@+id/relativeLayout"
+        android:id="@+id/main_temp_RL"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
@@ -31,7 +31,7 @@
             android:text="Description"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp" />
+            android:layout_marginTop="40dp" />
 
         <TextView
             android:id="@+id/current_loc_temp"
@@ -39,9 +39,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:paddingLeft="30dp"
-            android:textSize="75sp"
+            android:textSize="70sp"
             android:layout_below="@+id/current_loc_description"
-            android:gravity="center"
             android:text="Temp" />
 
         <TextView
@@ -51,6 +50,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="Name"
+            android:textSize="30sp"
             android:layout_marginBottom="32dp" />
 
         <TextView
@@ -60,7 +60,18 @@
             android:text="temp here"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:textSize="12sp" />
+            android:textSize="15sp"
+            android:paddingRight="10dp" />
+
+        <TextView
+            android:id="@+id/current_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="day here"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="15sp"
+            android:paddingLeft="10dp" />
     </RelativeLayout>
 
     <!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
@@ -89,13 +100,13 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="#c0c0c0"
-        android:layout_above="@+id/allDays_RV_hor"/>
+        android:layout_above="@+id/allDays_HSV"/>
 
     <ListView
         android:id="@+id/days_LV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/allDays_RV_hor"
+        android:layout_below="@+id/allDays_HSV"
         android:layout_above="@+id/my_toolbar"
         android:divider="@null"
         android:dividerHeight="0dp"
@@ -112,12 +123,127 @@
         android:layout_centerVertical="true"
         android:visibility="invisible" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/allDays_RV_hor"
+    <HorizontalScrollView
+        android:id="@+id/allDays_HSV"
+        android:layout_below="@+id/main_temp_RL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/relativeLayout">
+        android:layout_height="100dp">
+        <RelativeLayout
+            android:id="@+id/innerLay"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/allDays_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:id="@+id/allDays_IV1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="80dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="158dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="235dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="313dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="392dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="470dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="550dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="629dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="708dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="784dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="864dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="941dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="1021dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="1100dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="1178dp"/>
+            <ImageView
+                android:id="@+id/allDays_IV17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingLeft="1256dp"/>
+            <TextView
+                android:id="@+id/allDays_bottom_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingTop="80dp"/>
+        </RelativeLayout>
 
-    </android.support.v7.widget.RecyclerView>
+    </HorizontalScrollView>
 
 </RelativeLayout>

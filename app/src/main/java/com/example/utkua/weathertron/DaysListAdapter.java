@@ -55,7 +55,7 @@ public class DaysListAdapter extends ArrayAdapter<WeatherModel> {
         if (getItem(position).getImgId() == 0) {
             imageView.setVisibility(View.GONE);
         } else {
-            imageView.setImageResource(WeatherUtilities.getIconResourceForWeatherCondition(getItem(position).getImgId()));
+            imageView.setImageResource(WeatherUtilities.getArtResourceForWeatherCondition(getItem(position).getImgId()));
         }
 
         if (getItem(position).getMinTempInfo() ==0.0d) {
