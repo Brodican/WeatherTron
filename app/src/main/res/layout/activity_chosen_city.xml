@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chosen_city_parent_RL"
+    android:background="@drawable/quantum_ic_cast_white_36"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -29,6 +31,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Description"
+            android:textColor="#2A2423"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp" />
@@ -40,6 +43,7 @@
             android:layout_centerHorizontal="true"
             android:paddingLeft="30dp"
             android:textSize="70sp"
+            android:textColor="#2A2423"
             android:layout_below="@+id/current_loc_description"
             android:text="Temp" />
 
@@ -50,6 +54,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="Name"
+            android:textColor="#2A2423"
             android:textSize="30sp"
             android:layout_marginBottom="32dp" />
 
@@ -68,6 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="day here"
+            android:textColor="#2A2423"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:textSize="15sp"
@@ -134,6 +140,7 @@
             android:layout_height="match_parent">
             <TextView
                 android:id="@+id/allDays_TV"
+                android:textColor="#2A2423"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <ImageView
@@ -239,6 +246,7 @@
                 android:paddingLeft="1256dp"/>
             <TextView
                 android:id="@+id/allDays_bottom_TV"
+                android:textColor="#2A2423"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingTop="80dp"/>

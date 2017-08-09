@@ -45,8 +45,9 @@ public class JsonUtilities {
         // Split JSONArray into sections
         JSONObject weatherObj = weatherWeath.getJSONObject(0);
         String weatherDescription = weatherObj.getString("description");
+        String curId = weatherObj.getString("id");
         // Declare String array to hold data, place data in array
-        String[] allData = new String[14];
+        String[] allData = new String[15];
         // Put temp, name, and weather description in array to be sent
         allData[0] = Integer.toString(tempC) + "°";
         allData[1] = Integer.toString(tempMinC);
@@ -60,6 +61,7 @@ public class JsonUtilities {
         allData[9] = sunset;
         allData[10] = pressure;
         allData[11] = humidity;
+        allData[14] = curId;
 
         if (jsonObject.has("rain")) {
             JSONObject rainInfo = jsonObject.getJSONObject("rain");

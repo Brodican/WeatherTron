@@ -1,23 +1,31 @@
 package com.example.utkua.weathertron;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +47,7 @@ import static android.R.attr.visibility;
 
 public class ChosenCityActivity extends AppCompatActivity {
 
+    private RelativeLayout mMainLayout;
     private TextView mWeatherTV;
     private TextView mCurrentTV;
     private EditText mInputET;
@@ -62,6 +71,9 @@ public class ChosenCityActivity extends AppCompatActivity {
     private String mHumidity;
     private String mRain;
     private String mSnow;
+    private String mCurrentId;
+    private Integer mWeatherInt;
+    private String mStringColourString;
 
     public static final String TAG = "ChosenCityActivity";
 
@@ -76,22 +88,12 @@ public class ChosenCityActivity extends AppCompatActivity {
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
 
-        final Intent intent = new Intent();
+        final Intent intent = getIntent();
+
+        mMainLayout = (RelativeLayout) findViewById(R.id.chosen_city_parent_RL);
 
         mCurrentTV = (TextView) findViewById(R.id.current_location);
-//        mInputET = (EditText) findViewById(R.id.input_get_location);
         mWeatherPB = (ProgressBar) findViewById(R.id.loading_weather);
-//        FloatingActionButton floaterButt = (FloatingActionButton) findViewById(R.id.button_send_input_location);
-//
-//        floaterButt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // Set inputLocation to the location which was input by the user
-//                String locationString = mInputET.getText().toString();
-//                // Loads weather data
-//                loadWeatherDataString(locationString);
-//            }
-//        });
 
         // Assign value to mFusedLocationClient with LocationServices
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -111,11 +113,13 @@ public class ChosenCityActivity extends AppCompatActivity {
                             Double lon = location.getLongitude();
                             Log.d(TAG, "Lat: " + lat + " Lon: " + lon);
                             if (intent.getExtras() == null) {
+                                Log.d(TAG, "Intent extra null on start of ChosenCityActivity");
                                 loadWeatherDataCoordinatesCurrent(lat, lon);
                                 loadWeatherDataCoordinates7Day(lat, lon);
                                 loadWeatherDataCoordinatesAllDay(lat, lon);
                             }
                             else {
+                                Log.d(TAG, "Intent extra not null on start of ChosenCityActivity");
                                 Bundle locationB = intent.getExtras();
                                 String locationS = locationB.getString("location");
                                 loadWeatherDataStringCurrent(locationS);
@@ -161,8 +165,12 @@ public class ChosenCityActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.choose_city:
-                //your code
-                // EX : call intent if you want to swich to other activity
+                Intent intent = new Intent(ChosenCityActivity.this, ChooseCityActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.refresh_location:
+                Intent intentRef = new Intent(ChosenCityActivity.this, ChosenCityActivity.class);
+                startActivity(intentRef);
                 return true;
         }
         return false;
@@ -282,12 +290,50 @@ public class ChosenCityActivity extends AppCompatActivity {
                 mSunset = weatherData[9];
                 mPressure = weatherData[10];
                 mHumidity = weatherData[11];
+                mCurrentId = weatherData[14];
                 if (weatherData[12] != null)
                     mRain = weatherData[12];
 
                 if (weatherData[13] != null)
                     mSnow = weatherData[13];
 
+                String weathC = WeatherUtilities.getWeatherConditionString(Integer.parseInt(mCurrentId));
+                Log.d(TAG, "weather is currently: " + weathC);
+
+                switch(weathC) {
+                    case "cloud": mWeatherInt = R.drawable.cloudy_sky;
+                        mStringColourString = "#2A2423";
+                        break;
+                    case "clear": mWeatherInt = R.drawable.blue_sky_3; Log.d(TAG, "mWeatherInt set to blue sky: " + R.drawable.blue_sky_3);
+                        mStringColourString = "#1B3737";
+                        break;
+                    case "light": mWeatherInt = R.drawable.light_clouds_2; Log.d(TAG, "mWeatherInt set to light clouds: " + R.drawable.light_clouds_2);
+                        mStringColourString = "#2A2423";
+                        break;
+                    case "rain": mWeatherInt = R.drawable.rainy_phone; Log.d(TAG, "mWeatherInt set to rain: " + R.drawable.rainy_phone);
+                        mStringColourString = "#DBF3F3";
+                        break;
+                    case "fog": mWeatherInt = R.drawable.foggy; Log.d(TAG, "mWeatherInt set to fog: " + R.drawable.foggy);
+                        mStringColourString = "#DBF3F3";
+                        break;
+                    case "snow": mWeatherInt = R.drawable.snow; Log.d(TAG, "mWeatherInt set to snow: " + R.drawable.snow);
+                        mStringColourString = "#00FF36";
+                        break;
+                    default: mWeatherInt = R.drawable.quantum_ic_refresh_white_24; Log.d(TAG, "mWeatherInt set to black: " + R.drawable.quantum_ic_refresh_white_24);
+                        mStringColourString = "black";
+                        break;
+                }
+
+                Log.d(TAG, "mWeatherInt: " + mWeatherInt);
+                Log.d(TAG, "Real drawable id: " + R.drawable.blue_sky_3);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    if (mWeatherInt != null) {
+                        Context context = ChosenCityActivity.this;
+                        mMainLayout.setBackgroundDrawable(ContextCompat.getDrawable(context, mWeatherInt));
+                        Log.d(TAG, "Color String: " + mStringColourString);
+                        setColours(mStringColourString);
+                    }
+                }
                 mWeatherPB.setVisibility(View.INVISIBLE);
             }
         }
@@ -378,6 +424,7 @@ public class ChosenCityActivity extends AppCompatActivity {
                 mSunset = weatherData[9];
                 mPressure = weatherData[10];
                 mHumidity = weatherData[11];
+                mCurrentId = weatherData[14];
                 if (weatherData[12] != null)
                     mRain = weatherData[12];
 
@@ -385,6 +432,43 @@ public class ChosenCityActivity extends AppCompatActivity {
                     mSnow = weatherData[13];
 
                 mWeatherPB.setVisibility(View.INVISIBLE);
+
+                String weathC = WeatherUtilities.getWeatherConditionString(Integer.parseInt(mCurrentId));
+                Log.d(TAG, "weather is currently: " + weathC);
+
+                switch(weathC) {
+                    case "cloud": mWeatherInt = R.drawable.cloudy_sky;
+                        mStringColourString = "#2A2423";
+                        break;
+                    case "clear": mWeatherInt = R.drawable.blue_sky_3; Log.d(TAG, "mWeatherInt set to blue sky: " + R.drawable.blue_sky_3);
+                        mStringColourString = "#1B3737";
+                        break;
+                    case "light": mWeatherInt = R.drawable.light_clouds_2; Log.d(TAG, "mWeatherInt set to light clouds: " + R.drawable.light_clouds_2);
+                        mStringColourString = "#2A2423";
+                        break;
+                    case "rain": mWeatherInt = R.drawable.rainy_phone; Log.d(TAG, "mWeatherInt set to rain: " + R.drawable.rainy_phone);
+                        mStringColourString = "#DBF3F3";
+                        break;
+                    case "fog": mWeatherInt = R.drawable.foggy; Log.d(TAG, "mWeatherInt set to fog: " + R.drawable.foggy);
+                        mStringColourString = "#DBF3F3";
+                        break;
+                    case "snow": mWeatherInt = R.drawable.snow; Log.d(TAG, "mWeatherInt set to snow: " + R.drawable.snow);
+                        mStringColourString = "#00FF36";
+                        break;
+                    default: mWeatherInt = R.drawable.quantum_ic_refresh_white_24; Log.d(TAG, "mWeatherInt set to black: " + R.drawable.quantum_ic_refresh_white_24);
+                        mStringColourString = "black";
+                        break;
+                }
+
+                Log.d(TAG, "mWeatherInt: " + mWeatherInt);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    if (mWeatherInt != null) {
+                        Context context = ChosenCityActivity.this;
+                        mMainLayout.setBackgroundDrawable(ContextCompat.getDrawable(context, mWeatherInt));
+                        Log.d(TAG, "Color String: " + mStringColourString);
+                        setColours(mStringColourString);
+                    }
+                }
             }
         }
     }
@@ -515,7 +599,7 @@ public class ChosenCityActivity extends AppCompatActivity {
 
                 String formattedSunset = formattedSunsetH + ":" + formattedSunsetM;
 
-                DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, weatherModels); // ChosenCityActivity set
+                DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, weatherModels, mStringColourString); // ChosenCityActivity set
                 list = (ListView)findViewById(R.id.days_LV);
                 list.setAdapter(adapter);
                 WeatherModel  model = new WeatherModel();
@@ -530,6 +614,17 @@ public class ChosenCityActivity extends AppCompatActivity {
                 weatherModels.add(separatorModel);
                 weatherModels.add(model);
                 weatherModels.add(separatorModel);
+
+                Log.d(TAG, "mWeatherInt: " + mWeatherInt);
+                Log.d(TAG, "Real drawable id: " + R.drawable.blue_sky_3);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    if (mWeatherInt != null) {
+                        Context context = ChosenCityActivity.this;
+                        mMainLayout.setBackgroundDrawable(ContextCompat.getDrawable(context, mWeatherInt));
+                        Log.d(TAG, "Color String: " + mStringColourString);
+                        setColours(mStringColourString);
+                    }
+                }
 
                 mWeatherPB.setVisibility(View.INVISIBLE);
             }
@@ -610,7 +705,6 @@ public class ChosenCityActivity extends AppCompatActivity {
                     dayInfo.setDayInfo(dateStr);
                     dayInfo.setImgId(Integer.parseInt(weatherData[i+16]));
                     weatherModels.add(dayInfo);
-
                 }
 
 //                allData[6] = windSpeed;
@@ -661,7 +755,7 @@ public class ChosenCityActivity extends AppCompatActivity {
 
                 String formattedSunset = formattedSunsetH + ":" + formattedSunsetM;
 
-                DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, weatherModels); // ChosenCityActivity set
+                DaysListAdapter adapter = new DaysListAdapter(ChosenCityActivity.this, weatherModels, mStringColourString); // ChosenCityActivity set
                 list = (ListView)findViewById(R.id.days_LV);
                 list.setAdapter(adapter);
                 WeatherModel  model = new WeatherModel();
@@ -676,6 +770,17 @@ public class ChosenCityActivity extends AppCompatActivity {
                 weatherModels.add(separatorModel);
                 weatherModels.add(model);
                 weatherModels.add(separatorModel);
+
+                Log.d(TAG, "mWeatherInt: " + mWeatherInt);
+                Log.d(TAG, "Real drawable id: " + R.drawable.blue_sky_3);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    if (mWeatherInt != null) {
+                        Context context = ChosenCityActivity.this;
+                        mMainLayout.setBackgroundDrawable(ContextCompat.getDrawable(context, mWeatherInt));
+                        Log.d(TAG, "Color String: " + mStringColourString);
+                        setColours(mStringColourString);
+                    }
+                }
 
                 mWeatherPB.setVisibility(View.INVISIBLE);
             }
@@ -841,5 +946,26 @@ public class ChosenCityActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void setColours(String colour) {
+        final LayoutInflater factory = getLayoutInflater();
+
+        TextView view2 = (TextView) findViewById(R.id.current_location);
+        TextView view3 = (TextView) findViewById(R.id.current_loc_description);
+        TextView view4 = (TextView) findViewById(R.id.current_loc_temp);
+        TextView view5 = (TextView) findViewById(R.id.current_day);
+        TextView view6 = (TextView) findViewById(R.id.allDays_TV);
+        TextView view7 = (TextView) findViewById(R.id.allDays_bottom_TV);
+        view2.setTextColor(Color.parseColor(colour));
+        view3.setTextColor(Color.parseColor(colour));
+        view4.setTextColor(Color.parseColor(colour));
+        view5.setTextColor(Color.parseColor(colour));
+        view6.setTextColor(Color.parseColor(colour));
+        view7.setTextColor(Color.parseColor(colour));
+    }
+
+    public void setColours(String colour1, String colour2) {
+
     }
 }

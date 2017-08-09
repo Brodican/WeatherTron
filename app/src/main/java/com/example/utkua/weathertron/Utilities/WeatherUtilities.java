@@ -13,6 +13,8 @@ import com.example.utkua.weathertron.R;
 public class WeatherUtilities {
     private static final String LOG_TAG = WeatherUtilities.class.getSimpleName();
 
+    private static final String TAG = "WeatherUtilities";
+
     /**
      * This method will convert a temperature from Celsius to Fahrenheit.
      *
@@ -331,6 +333,38 @@ public class WeatherUtilities {
             return R.drawable.ic_cloudy;
         }
         return -1;
+    }
+
+    public static String getWeatherConditionString(int weatherId) {
+        /*
+         * Based on weather code data found at:
+         * See http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+         */
+        Log.d(TAG, "weatherId in WeatherUtils: " + weatherId);
+        if (weatherId >= 200 && weatherId <= 232) {
+            return "storm";
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return "rain";
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return "rain";
+        } else if (weatherId == 511) {
+            return "snow";
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return "rain";
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return "snow";
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return "fog";
+        } else if (weatherId == 761 || weatherId == 781) {
+            return "storm";
+        } else if (weatherId == 800) {
+            return "clear";
+        } else if (weatherId == 801) {
+            return "light";
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return "cloud";
+        }
+        return null;
     }
 
     /**

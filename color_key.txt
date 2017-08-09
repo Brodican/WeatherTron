@@ -1,0 +1,5 @@
+#1B3737 - blue sky
+#2A2423 - cloudy sky / light clouds
+#F2EBEA - stormy
+#DBF3F3 - rainy phone
+#00FF36 - snowy

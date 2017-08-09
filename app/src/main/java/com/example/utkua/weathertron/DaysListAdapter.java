@@ -1,6 +1,7 @@
 package com.example.utkua.weathertron;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.renderscript.Double2;
 import android.text.Html;
 import android.util.Log;
@@ -25,13 +26,14 @@ import java.util.List;
 
 public class DaysListAdapter extends ArrayAdapter<WeatherModel> {
     private final Activity context;
+    private final String colourString;
 
 
     public static final String TAG = "DaysListActivity";
 
-    public DaysListAdapter(Activity context, List<WeatherModel> datas) {
+    public DaysListAdapter(Activity context, List<WeatherModel> datas, String mString) {
         super(context, R.layout.mylist, datas);
-
+        this.colourString = mString;
         this.context = context;
 
     }
@@ -44,6 +46,8 @@ public class DaysListAdapter extends ArrayAdapter<WeatherModel> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
         TextView tempTV = (TextView) rowView.findViewById(R.id.temps);
         View separator = rowView.findViewById(R.id.Separator);
+
+        txtTitle.setTextColor(Color.parseColor(colourString));
 
         if (getItem(position).getDayInfo() == null) {
             separator.setVisibility(View.VISIBLE);
@@ -58,7 +62,7 @@ public class DaysListAdapter extends ArrayAdapter<WeatherModel> {
             imageView.setImageResource(WeatherUtilities.getArtResourceForWeatherCondition(getItem(position).getImgId()));
         }
 
-        if (getItem(position).getMinTempInfo() ==0.0d) {
+        if (getItem(position).getMinTempInfo() == 0.0d) {
             tempTV.setVisibility(View.GONE);
         } else {
             String tempHTML = "<font color=#cc0029>" + Integer.toString(getItem(position).getMinTempInfo()) + "</font> <font color=#0516DE>" + Integer.toString(getItem(position).getMaxTempInfo()) + "</font>";
