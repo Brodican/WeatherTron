@@ -119,8 +119,14 @@ public class ChosenCityActivity extends AppCompatActivity {
                             else {
                                 Log.d(TAG, "Intent extra not null on start of ChosenCityActivity");
                                 Bundle locationB = intent.getExtras();
-                                String locationS = locationB.getString("location");
-                                loadWeatherDataStringCurrent(locationS);
+                                if (locationB.getString("location") != null) {
+                                    String locationS = locationB.getString("location");
+                                    loadWeatherDataStringCurrent(locationS);
+                                }
+                                else {
+                                    Log.d(TAG, "Intent extra location null on start of ChosenCityActivity");
+                                    loadWeatherDataCoordinatesCurrent(lat, lon);
+                                }
                             }
                         }
                     }
