@@ -115,16 +115,12 @@ public class ChosenCityActivity extends AppCompatActivity {
                             if (intent.getExtras() == null) {
                                 Log.d(TAG, "Intent extra null on start of ChosenCityActivity");
                                 loadWeatherDataCoordinatesCurrent(lat, lon);
-                                loadWeatherDataCoordinates7Day(lat, lon);
-                                loadWeatherDataCoordinatesAllDay(lat, lon);
                             }
                             else {
                                 Log.d(TAG, "Intent extra not null on start of ChosenCityActivity");
                                 Bundle locationB = intent.getExtras();
                                 String locationS = locationB.getString("location");
                                 loadWeatherDataStringCurrent(locationS);
-                                loadWeatherDataString7Day(locationS);
-                                loadWeatherDataStringAllDay(locationS);
                             }
                         }
                     }
@@ -165,13 +161,17 @@ public class ChosenCityActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.choose_city:
-                Intent intent = new Intent(ChosenCityActivity.this, ChooseCityActivity.class);
-                startActivity(intent);
+                Log.d(TAG, "Intent has location");
+                Intent startIntent = new Intent(ChosenCityActivity.this, ChooseCityActivity.class);
+                startActivity(startIntent);
                 return true;
             case R.id.refresh_location:
-                Intent intentRef = new Intent(ChosenCityActivity.this, ChosenCityActivity.class);
-                startActivity(intentRef);
-                return true;
+                Intent intent = getIntent();
+                if (intent.hasExtra("location")) {
+                        Intent intentRef = new Intent(ChosenCityActivity.this, ChosenCityActivity.class);
+                        startActivity(intentRef);
+                        return true;
+                }
         }
         return false;
     }
@@ -182,29 +182,16 @@ public class ChosenCityActivity extends AppCompatActivity {
         new FetchWeatherTaskCoordinatesCurrent().execute(lat, lon);
     }
 
-    private void loadWeatherDataCoordinates7Day(Double lat, Double lon) {
-        new FetchWeatherTaskCoordinates7Day().execute(lat, lon);
-    }
-
-    private void loadWeatherDataCoordinatesAllDay(Double lat, Double lon) {
-        new FetchWeatherTaskCoordinatesAllDay().execute(lat, lon);
-    }
-
     private void loadWeatherDataStringCurrent(String location) {
         Log.d(TAG, "loadWeatherData called");
         // AsyncTask which loads weather data in background, using location param
         new FetchWeatherTaskStringCurrent().execute(location);
     }
 
-    private void loadWeatherDataString7Day(String location) {
-        new FetchWeatherTaskString7Day().execute(location);
-    }
-
-    private void loadWeatherDataStringAllDay(String location) {
-        new FetchWeatherTaskStringAllDay().execute(location);
-    }
-
     public class FetchWeatherTaskCoordinatesCurrent extends AsyncTask<Double, Void, String[]> {
+
+        Double mLat;
+        Double mLon;
 
         @Override
         protected void onPreExecute() {
@@ -223,7 +210,9 @@ public class ChosenCityActivity extends AppCompatActivity {
             }
 
             Double lat = doubles[0];
+            mLat = lat;
             Double lon = doubles[1];
+            mLon = lon;
 
             URL weatherRequestUrlCurrent = NetworkUtilities.buildUrl(lat, lon);
 
@@ -334,12 +323,14 @@ public class ChosenCityActivity extends AppCompatActivity {
                         setColours(mStringColourString);
                     }
                 }
-                mWeatherPB.setVisibility(View.INVISIBLE);
+                new FetchWeatherTaskCoordinates7Day().execute(mLat, mLon);
             }
         }
     }
 
     public class FetchWeatherTaskStringCurrent extends AsyncTask<String, Void, String[]> {
+
+        String mLocation;
 
         @Override
         protected void onPreExecute() {
@@ -358,6 +349,7 @@ public class ChosenCityActivity extends AppCompatActivity {
             }
 
             String location = strings[0];
+            mLocation = location;
 
             URL weatherRequestUrlCurrent = NetworkUtilities.buildUrl(location);
 
@@ -431,8 +423,6 @@ public class ChosenCityActivity extends AppCompatActivity {
                 if (weatherData[13] != null)
                     mSnow = weatherData[13];
 
-                mWeatherPB.setVisibility(View.INVISIBLE);
-
                 String weathC = WeatherUtilities.getWeatherConditionString(Integer.parseInt(mCurrentId));
                 Log.d(TAG, "weather is currently: " + weathC);
 
@@ -469,11 +459,15 @@ public class ChosenCityActivity extends AppCompatActivity {
                         setColours(mStringColourString);
                     }
                 }
+                new FetchWeatherTaskString7Day().execute(mLocation);
             }
         }
     }
 
     public class FetchWeatherTaskCoordinates7Day extends AsyncTask<Double, Void, String[]> {
+
+        Double mLat;
+        Double mLon;
 
         @Override
         protected void onPreExecute() {
@@ -492,6 +486,8 @@ public class ChosenCityActivity extends AppCompatActivity {
 
             Double lat = doubles[0];
             Double lon = doubles[1];
+            mLat = lat;
+            mLon = lon;
 
             URL weatherRequestUrl7Day = NetworkUtilities.build7DayUrl(lat, lon);
 
@@ -625,13 +621,14 @@ public class ChosenCityActivity extends AppCompatActivity {
                         setColours(mStringColourString);
                     }
                 }
-
-                mWeatherPB.setVisibility(View.INVISIBLE);
+                new FetchWeatherTaskCoordinatesAllDay().execute(mLat, mLon);
             }
         }
     }
 
     public class FetchWeatherTaskString7Day extends AsyncTask<String, Void, String[]> {
+
+        String mLocation;
 
         @Override
         protected void onPreExecute() {
@@ -649,6 +646,7 @@ public class ChosenCityActivity extends AppCompatActivity {
             }
 
             String location = strings[0];
+            mLocation = location;
 
             URL weatherRequestUrl7Day = NetworkUtilities.build7DayUrl(location);
 
@@ -782,12 +780,15 @@ public class ChosenCityActivity extends AppCompatActivity {
                     }
                 }
 
-                mWeatherPB.setVisibility(View.INVISIBLE);
+                new FetchWeatherTaskStringAllDay().execute(mLocation);
             }
         }
     }
 
     public class FetchWeatherTaskCoordinatesAllDay extends AsyncTask<Double, Void, String[]> {
+
+        Double mLat;
+        Double mLon;
 
         @Override
         protected void onPreExecute() {
@@ -806,6 +807,8 @@ public class ChosenCityActivity extends AppCompatActivity {
 
             Double lat = doubles[0];
             Double lon = doubles[1];
+            mLat = lat;
+            mLon = lon;
 
             URL weatherRequestUrlAllDay = NetworkUtilities.buildAllDayUrl(lat, lon);
 
@@ -864,11 +867,14 @@ public class ChosenCityActivity extends AppCompatActivity {
                     allDaysTV.append(formattedHour + "                " + space2);
                     currentHour+=3;
                 }
+                mWeatherPB.setVisibility(View.INVISIBLE);
             }
         }
     }
 
     public class FetchWeatherTaskStringAllDay extends AsyncTask<String, Void, String[]> {
+
+        String mLocation;
 
         @Override
         protected void onPreExecute() {
@@ -886,6 +892,7 @@ public class ChosenCityActivity extends AppCompatActivity {
             }
 
             String location = strings[0];
+            mLocation = location;
 
             URL weatherRequestUrlAllDay = NetworkUtilities.buildAllDayUrl(location);
 
@@ -944,6 +951,7 @@ public class ChosenCityActivity extends AppCompatActivity {
                     allDaysTV.append(formattedHour + "                " + space2);
                     currentHour+=3;
                 }
+                mWeatherPB.setVisibility(View.INVISIBLE);
             }
         }
     }

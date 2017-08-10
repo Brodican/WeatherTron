@@ -25,7 +25,13 @@ public class JsonUtilities {
         JSONArray weatherWeath = jsonObject.getJSONArray("weather");
         JSONObject wind = jsonObject.getJSONObject("wind");
         String windSpeed = wind.getString("speed");
-        String windAngle = wind.getString("deg");
+        String windAngle;
+        if (wind.has("deg")) {
+            windAngle = wind.getString("deg");
+        }
+        else {
+            windAngle = "0";
+        }
         JSONObject sys = jsonObject.getJSONObject("sys");
         String sunrise = sys.getString("sunrise");
         Log.d(TAG, "Sunrise: " + sunrise);
