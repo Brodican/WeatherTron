@@ -116,6 +116,7 @@
         android:layout_above="@+id/my_toolbar"
         android:divider="@null"
         android:dividerHeight="0dp"
+        android:focusable="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     </ListView>

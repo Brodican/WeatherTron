@@ -34,7 +34,7 @@ public class CityListAdapter extends ArrayAdapter{
 
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView=inflater.inflate(R.layout.mycitylist, null,true);
+        View rowView = inflater.inflate(R.layout.mycitylist, null, true);
 
         TextView cityChoose = rowView.findViewById(R.id.city_choose_TV);
 

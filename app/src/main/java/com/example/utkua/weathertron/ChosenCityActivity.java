@@ -103,34 +103,34 @@ public class ChosenCityActivity extends AppCompatActivity {
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     1);
         }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            Double lat = location.getLatitude();
-                            Double lon = location.getLongitude();
-                            Log.d(TAG, "Lat: " + lat + " Lon: " + lon);
-                            if (intent.getExtras() == null) {
-                                Log.d(TAG, "Intent extra null on start of ChosenCityActivity");
-                                loadWeatherDataCoordinatesCurrent(lat, lon);
-                            }
-                            else {
-                                Log.d(TAG, "Intent extra not null on start of ChosenCityActivity");
-                                Bundle locationB = intent.getExtras();
-                                if (locationB.getString("location") != null) {
-                                    String locationS = locationB.getString("location");
-                                    loadWeatherDataStringCurrent(locationS);
-                                }
-                                else {
-                                    Log.d(TAG, "Intent extra location null on start of ChosenCityActivity");
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                Double lat = location.getLatitude();
+                                Double lon = location.getLongitude();
+                                Log.d(TAG, "Lat: " + lat + " Lon: " + lon);
+                                if (intent.getExtras() == null) {
+                                    Log.d(TAG, "Intent extra null on start of ChosenCityActivity");
                                     loadWeatherDataCoordinatesCurrent(lat, lon);
+                                } else {
+                                    Log.d(TAG, "Intent extra not null on start of ChosenCityActivity");
+                                    Bundle locationB = intent.getExtras();
+                                    if (locationB.getString("location") != null) {
+                                        String locationS = locationB.getString("location");
+                                        loadWeatherDataStringCurrent(locationS);
+                                    } else {
+                                        Log.d(TAG, "Intent extra location null on start of ChosenCityActivity");
+                                        loadWeatherDataCoordinatesCurrent(lat, lon);
+                                    }
                                 }
                             }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     @Override
@@ -174,9 +174,10 @@ public class ChosenCityActivity extends AppCompatActivity {
             case R.id.refresh_location:
                 Intent intent = getIntent();
                 if (intent.hasExtra("location")) {
-                        Intent intentRef = new Intent(ChosenCityActivity.this, ChosenCityActivity.class);
-                        startActivity(intentRef);
-                        return true;
+                    Intent intentRef = new Intent(ChosenCityActivity.this, ChosenCityActivity.class);
+                    startActivity(intentRef);
+                    finish();
+                    return true;
                 }
         }
         return false;
@@ -210,7 +211,6 @@ public class ChosenCityActivity extends AppCompatActivity {
 
             Log.d(TAG, "doInBackground called");
 
-            /* If there's no zip code, there's nothing to look up. */
             if (doubles.length == 0) {
                 return null;
             }

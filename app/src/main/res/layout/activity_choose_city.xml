@@ -30,5 +30,6 @@
     <ListView
         android:id="@+id/saved_cities_LV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/my_toolbar"></ListView>
 </RelativeLayout>

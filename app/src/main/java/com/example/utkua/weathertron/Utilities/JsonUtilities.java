@@ -14,6 +14,23 @@ public class JsonUtilities {
 
     private static String TAG = "JsonUtilities";
 
+    public static String[] getTempOnlyFromJson(String forecastJsonStr) throws JSONException {
+        String[] allData = new String[2];
+
+        // jsonObject containing all data, unformatted
+        JSONObject jsonObject = new JSONObject(forecastJsonStr);
+        // "main" gets main details from the sent JSONObject
+        JSONObject weatherMain = new JSONObject(jsonObject.getString("main"));
+        // Returns temperature in degrees Kelvin
+        Double tempK = Double.parseDouble(weatherMain.getString("temp"));
+        int tempC = (int) (tempK - 273);
+        String tempString = tempC + "°";
+        String timeString = jsonObject.getString("dt");
+        allData[0] = tempString;
+        allData[1] = timeString;
+        return allData;
+    }
+
     public static String[] getCurrentFromJson(String forecastJsonStr)
             throws JSONException {
         // jsonObject containing all data, unformatted

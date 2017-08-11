@@ -24,7 +24,7 @@ public class NetworkUtilities {
 
         try {
             url = new URL(testUrl);
-            Log.d(TAG, "Url in buildURL: " + url);
+            Log.d(TAG, "Url in buildURL coords: " + url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -39,7 +39,7 @@ public class NetworkUtilities {
 
         try {
             url = new URL(testUrl);
-            Log.d(TAG, "Url in buildURL: " + url);
+            Log.d(TAG, "Url in buildURL string: " + url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

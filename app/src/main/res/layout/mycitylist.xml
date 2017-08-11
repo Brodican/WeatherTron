@@ -3,17 +3,25 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:id="@+id/city_choose_TV"
+        android:id="@+id/city_choose_time_TV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="25sp"
         android:paddingLeft="10dp"
-        android:layout_gravity="left" />
+        android:layout_gravity="left"
+        android:gravity="left"/>
+    <TextView
+        android:id="@+id/city_choose_TV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:layout_gravity="center" />
     <TextView
         android:id="@+id/city_choose_temp_TV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="25sp"
         android:paddingRight="10dp"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:gravity="right"/>
 </LinearLayout>
