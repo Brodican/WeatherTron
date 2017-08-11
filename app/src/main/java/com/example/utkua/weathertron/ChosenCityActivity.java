@@ -75,6 +75,8 @@ public class ChosenCityActivity extends AppCompatActivity {
     private Integer mWeatherInt;
     private String mStringColourString;
 
+    private Integer mCurrentMapEntry;
+
     public static final String TAG = "ChosenCityActivity";
 
     @Override
@@ -170,6 +172,7 @@ public class ChosenCityActivity extends AppCompatActivity {
                 Log.d(TAG, "Intent has location");
                 Intent startIntent = new Intent(ChosenCityActivity.this, ChooseCityActivity.class);
                 startActivity(startIntent);
+                finish();
                 return true;
             case R.id.refresh_location:
                 Intent intent = getIntent();

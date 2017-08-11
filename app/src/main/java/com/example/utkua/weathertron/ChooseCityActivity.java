@@ -1,38 +1,27 @@
 package com.example.utkua.weathertron;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.utkua.weathertron.Data.CityModel;
-import com.example.utkua.weathertron.R;
 import com.example.utkua.weathertron.Utilities.JsonUtilities;
 import com.example.utkua.weathertron.Utilities.NetworkUtilities;
-import com.example.utkua.weathertron.Utilities.WeatherUtilities;
+import com.example.utkua.weathertron.Utilities.SwipeDismissTouchListener;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class ChooseCityActivity extends AppCompatActivity {
@@ -46,7 +35,7 @@ public class ChooseCityActivity extends AppCompatActivity {
     private ProgressBar mCitiesProgress;
 
     private CityModel cityModel;
-    private String cityNameforDialog;
+    private String lowerCaseCityName;
 
     CityModelListAdapter cityModelListAdapter;
 
@@ -72,54 +61,71 @@ public class ChooseCityActivity extends AppCompatActivity {
             }
         });
         addCities();
-        mCitiesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                cityModel = (CityModel) parent.getAdapter().getItem(position);
+        // Code for swipe removal
+        ListView listView = mCitiesLV;
+        // Create a ListView-specific touch listener. ListViews are given special treatment because
+        // by default they handle touches for their list items... i.e. they're in charge of drawing
+        // the pressed state (the list selector), handling list item clicks, etc.
+        SwipeDismissListViewTouchListener touchListener =
+                new SwipeDismissListViewTouchListener(
+                        listView,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
 
-                TextView tv = view.findViewById(R.id.city_choose_TV);
-                String city = tv.getText().toString();
-                cityNameforDialog = Character.toLowerCase(city.charAt(0)) + city.substring(1);
-                Toast.makeText(ChooseCityActivity.this, city, Toast.LENGTH_SHORT).show();
-                AlertDialog.Builder builder = new AlertDialog.Builder(ChooseCityActivity.this);
-                builder.setMessage("U sure fam?!").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
-            }
-        });
-        mCitiesLV.setOnTouchListener(new OnSwipeTouchListener(ChooseCityActivity.this) {
-            public void onSwipeTop() {
-                Toast.makeText(ChooseCityActivity.this, "top", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeRight() {
-                Toast.makeText(ChooseCityActivity.this, "right", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeLeft() {
-                Toast.makeText(ChooseCityActivity.this, "left", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeBottom() {
-                Toast.makeText(ChooseCityActivity.this, "bottom", Toast.LENGTH_SHORT).show();
-            }
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    String city = cityModelListAdapter.getItem(position).getName();
+                                    lowerCaseCityName = Character.toLowerCase(city.charAt(0)) + city.substring(1);
+                                    cityModelListAdapter.remove(cityModelListAdapter.getItem(position));
+                                    SharedPreferences preferences = ChooseCityActivity.this.getPreferences(Context.MODE_PRIVATE);
+                                    preferences.edit().remove(lowerCaseCityName).commit();
+                                }
+                                cityModelListAdapter.notifyDataSetChanged();
+                            }
+                        });
+        listView.setOnTouchListener(touchListener);
+        // Setting this scroll listener is required to ensure that during ListView scrolling,
+        // we don't look for swipes.
+        listView.setOnScrollListener(touchListener.makeScrollListener());
 
-        });
-    }
+        // Set up normal ViewGroup example
+        final ViewGroup dismissableContainer = (ViewGroup) findViewById(R.id.city_choose_model_LL);
+        for (int i = 0; i < cityModels.size(); i++) {
+            final Button dismissableButton = new Button(this);
+            dismissableButton.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            dismissableButton.setText("Button " + (i + 1));
+            dismissableButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(ChooseCityActivity.this,
+                            "Clicked " + ((Button) view).getText(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+            // Create a generic swipe-to-dismiss touch listener.
+            dismissableButton.setOnTouchListener(new SwipeDismissTouchListener(
+                    dismissableButton,
+                    null,
+                    new SwipeDismissTouchListener.DismissCallbacks() {
+                        @Override
+                        public boolean canDismiss(Object token) {
+                            return true;
+                        }
 
-    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    //Yes button clicked
-                    SharedPreferences preferences = ChooseCityActivity.this.getPreferences(Context.MODE_PRIVATE);
-                    cityModelListAdapter.remove(cityModel);
-                    preferences.edit().remove(cityNameforDialog).commit();
-                    break;
-
-                case DialogInterface.BUTTON_NEGATIVE:
-                    //No button clicked
-                    break;
-            }
+                        @Override
+                        public void onDismiss(View view, Object token) {
+                            dismissableContainer.removeView(dismissableButton);
+                        }
+                    }));
+            dismissableContainer.addView(dismissableButton);
         }
-    };
+    }
 
     private void addCities () {
         cityModelListAdapter = new CityModelListAdapter(this, R.layout.mycitylist, cityModels);
